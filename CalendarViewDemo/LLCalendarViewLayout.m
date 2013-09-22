@@ -19,9 +19,7 @@ static NSString * const LLCalendarLayoutDayCellKind = @"DayCell";
 @property (nonatomic, strong) NSDictionary *layoutInfo;
 @end
 
-@implementation LLCalendarViewLayout {
-    UIDynamicAnimator *_dynamicAnimator;
-}
+@implementation LLCalendarViewLayout
 
 - (id)init
 {
@@ -38,23 +36,6 @@ static NSString * const LLCalendarLayoutDayCellKind = @"DayCell";
 
 - (void)prepareLayout
 {
-    // Set up the animator
-    if (!_dynamicAnimator) {
-        _dynamicAnimator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
-        
-        CGSize contentSize = [self collectionViewContentSize];
-        NSArray *items = [self layoutAttributesForElementsInRect:CGRectMake(0, 0, contentSize.width, contentSize.height)];
-        
-        for (UICollectionViewLayoutAttributes *item in items) {
-            UIAttachmentBehavior *spring = [[UIAttachmentBehavior alloc] initWithItem:item attachedToAnchor:[item center]];
-            spring.length = 0;
-            spring.damping = 0.5;
-            spring.frequency = 0.8;
-            
-            [_dynamicAnimator addBehavior:spring];
-        }
-    }
-    
     NSMutableDictionary *newLayoutInfo = [NSMutableDictionary dictionary];
     NSMutableDictionary *cellLayoutInfo = [NSMutableDictionary dictionary];
     
@@ -98,45 +79,26 @@ static NSString * const LLCalendarLayoutDayCellKind = @"DayCell";
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
 {
-//    NSMutableArray *allAttributes = [NSMutableArray arrayWithCapacity:self.layoutInfo.count];
-//    
-//    [_layoutInfo enumerateKeysAndObjectsUsingBlock:^(NSString *elementIdentifier,
-//                                                         NSDictionary *elementsInfo,
-//                                                         BOOL *stop) {
-//        [elementsInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath,
-//                                                          UICollectionViewLayoutAttributes *attributes,
-//                                                          BOOL *innerStop) {
-//            if (CGRectIntersectsRect(rect, attributes.frame)) {
-//                [allAttributes addObject:attributes];
-//            }
-//        }];
-//    }];
-//    
-//    return allAttributes;
-    return [_dynamicAnimator itemsInRect:rect];
+    NSMutableArray *allAttributes = [NSMutableArray arrayWithCapacity:self.layoutInfo.count];
+    
+    [_layoutInfo enumerateKeysAndObjectsUsingBlock:^(NSString *elementIdentifier,
+                                                         NSDictionary *elementsInfo,
+                                                         BOOL *stop) {
+        [elementsInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath,
+                                                          UICollectionViewLayoutAttributes *attributes,
+                                                          BOOL *innerStop) {
+            if (CGRectIntersectsRect(rect, attributes.frame)) {
+                [allAttributes addObject:attributes];
+            }
+        }];
+    }];
+    
+    return allAttributes;
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-//    return _layoutInfo[LLCalendarLayoutDayCellKind][indexPath];
-    return [_dynamicAnimator layoutAttributesForCellAtIndexPath:indexPath];
-}
-
-- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
-{
-    UIScrollView *scrollView = self.collectionView;
-    CGFloat scrollDelta = newBounds.origin.x - scrollView.bounds.origin.x;
-    
-    for (UIAttachmentBehavior *spring in _dynamicAnimator.behaviors) {
-        UICollectionViewLayoutAttributes *item = [spring.items firstObject];
-        CGPoint center = item.center;
-        center.x += scrollDelta;
-        item.center = center;
-        
-        [_dynamicAnimator updateItemUsingCurrentState:item];
-    }
-    
-    return NO;
+    return _layoutInfo[LLCalendarLayoutDayCellKind][indexPath];
 }
 
 - (CGSize)collectionViewContentSize

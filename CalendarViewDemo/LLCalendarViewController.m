@@ -7,7 +7,7 @@
 //
 
 #import "LLCalendarViewController.h"
-#import "LLCalendarViewLayout.h"
+#import "LLSpringyCalendarViewLayout.h"
 #import "LLCalendarDayCell.h"
 
 static NSString * const CalendarDayCellIdentifier = @"CalendarDayCell";
@@ -49,7 +49,8 @@ static NSString * const CalendarDayCellIdentifier = @"CalendarDayCell";
     _calendarView = [[UICollectionView alloc] initWithFrame:calendarFrame collectionViewLayout:calendarLayout];
     _calendarView.dataSource = self;
     _calendarView.delegate = self;
-//    _calendarView.pagingEnabled = YES;
+    _calendarView.pagingEnabled = YES;
+    _calendarView.backgroundColor = [UIColor clearColor];
     [_calendarView registerClass:[LLCalendarDayCell class] forCellWithReuseIdentifier:CalendarDayCellIdentifier];
     [self.view addSubview:_calendarView];
 }
