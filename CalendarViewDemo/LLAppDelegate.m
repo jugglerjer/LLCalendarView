@@ -7,13 +7,20 @@
 //
 
 #import "LLAppDelegate.h"
+#import "LLCalendarViewController.h"
 
 @implementation LLAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
+    
+    _rootViewController = [[LLCalendarViewController alloc] init];
+    _rootViewController.title = @"Calendar View";
+    _navController = [[UINavigationController alloc] initWithRootViewController:_rootViewController];
+
+    self.window.rootViewController = _navController;
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
